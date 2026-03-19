@@ -6,7 +6,7 @@ This project demonstrates a **Token Translation & Verification Service** used in
 
 The service receives an external identity token (JWT) from a trusted identity provider, verifies it using the issuer’s JWKS endpoint, validates token claims, normalizes identity attributes, and issues a new Sandbox session token.
 
-The service acts as a **federation trust broker**, establishing a unified trust layer across multiple identity providers and enabling secure identity exchange between different systems and sandbox applications.
+The service acts as a **secure federation trust broker**, establishing a unified trust layer across multiple identity providers and enabling secure identity exchange between different systems and sandbox applications.
 
 ---
 
@@ -230,6 +230,45 @@ External IdP → Gateway → Sandbox Token → Sandbox App
 * Asynchronous refresh avoids blocking requests during cache expiry
 * Stateless design enables horizontal scaling
 * Replay protection can be backed by Redis in production
+
+---
+
+## Key Generation (Local Setup)
+
+For security reasons, private keys are not stored in the repository.
+
+You can generate a key pair locally using OpenSSL:
+
+Generate private key
+
+```
+openssl genrsa -out sandbox-private.pem 2048
+```
+
+Generate public key
+
+```
+openssl rsa -in sandbox-private.pem -pubout -out sandbox-public.pem
+```
+
+Place the generated keys in a secure local path and configure the application to load them via file path or environment variables.
+
+Example configuration:
+
+```yaml
+sandbox:
+  privateKeyPath: keys/sandbox-private.pem
+  publicKeyPath: keys/sandbox-public.pem
+```
+
+Ensure key files are excluded from version control:
+
+```
+*.pem
+*.key
+```
+
+> In production systems, keys should be managed using a secure vault or key management service.
 
 ---
 
